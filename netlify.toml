@@ -1,0 +1,42 @@
+[build]
+  # Comando para instalar Flutter (si no está instalado en el entorno de Netlify)
+  # Netlify Build Image incluye Flutter, pero puedes especificar la versión
+  command = "flutter build web --release"
+  
+  # Directorio donde se genera el build
+  publish = "build/web"
+
+[build.environment]
+  # Versión de Flutter (ajusta según necesites)
+  FLUTTER_VERSION = "stable"
+
+# Configuración de redirecciones para SPA (Single Page Application)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers de seguridad
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
