@@ -51,23 +51,38 @@ flutter build web --release --base-href / --verbose 2>&1 | tee build.log || {
     exit 1
 }
 
+# Verificar que el build se completó correctamente
+if [ ! -d "build/web" ]; then
+    echo "❌ Error: El directorio build/web no existe después del build"
+    echo "📋 Verificando estructura de directorios..."
+    ls -la build/ || true
+    exit 1
+fi
+
 echo "✅ Build completado exitosamente!"
 echo "📁 Archivos generados en: build/web"
 ls -la build/web/ | head -20
 
-# Verificar que el archivo _redirects se copió correctamente
+# Verificar y copiar el archivo _redirects
+echo "📝 Verificando archivo _redirects..."
 if [ -f "build/web/_redirects" ]; then
-  echo "✅ Archivo _redirects encontrado en build/web"
+  echo "✅ Archivo _redirects ya existe en build/web"
+  cat build/web/_redirects
+elif [ -f "web/_redirects" ]; then
+  echo "📋 Copiando _redirects desde web/ a build/web/"
+  cp web/_redirects build/web/_redirects
+  echo "✅ Archivo _redirects copiado exitosamente"
+else
+  echo "📝 Creando archivo _redirects en build/web/"
+  echo "/* /index.html  200" > build/web/_redirects
+  echo "✅ Archivo _redirects creado"
+fi
+
+# Verificar que el archivo se creó correctamente
+if [ -f "build/web/_redirects" ]; then
+  echo "✅ Verificación final: _redirects existe en build/web/"
   cat build/web/_redirects
 else
-  echo "⚠️  Archivo _redirects no encontrado, copiando desde web/"
-  if [ -f "web/_redirects" ]; then
-    cp web/_redirects build/web/_redirects
-    echo "✅ Archivo _redirects copiado"
-  else
-    echo "❌ Archivo _redirects no existe en web/, creándolo..."
-    echo "/* /index.html  200" > build/web/_redirects
-    echo "✅ Archivo _redirects creado"
-  fi
+  echo "⚠️  Advertencia: No se pudo crear _redirects, pero continuando..."
 fi
 
