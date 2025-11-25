@@ -11,13 +11,15 @@
   FLUTTER_VERSION = "stable"
 
 # Configuración de redirecciones para SPA (Single Page Application)
-# IMPORTANTE: No usar force = true porque redirige también archivos JS/CSS
-# Solo redirigir rutas que no sean archivos estáticos
+# IMPORTANTE: Excluir archivos estáticos de la redirección
+# Netlify sirve archivos estáticos automáticamente si existen
+# Solo redirigir rutas que no correspondan a archivos existentes
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  # No usar force = true para permitir que los archivos estáticos se sirvan correctamente
+  # Sin force = true, Netlify solo redirige si el archivo no existe
+  # Esto permite que los archivos JS, CSS, imágenes, etc. se sirvan correctamente
 
 # Headers de seguridad
 [[headers]]
