@@ -55,13 +55,19 @@ echo "✅ Build completado exitosamente!"
 echo "📁 Archivos generados en: build/web"
 ls -la build/web/ | head -20
 
-# Crear archivo _redirects en build/web para Netlify
-# Esto asegura que los archivos estáticos se sirvan correctamente
-echo "📝 Creando archivo _redirects para Netlify..."
-cat > build/web/_redirects << 'EOF'
-# Redirigir solo rutas que no sean archivos estáticos
-# Los archivos JS, CSS, imágenes, etc. se sirven automáticamente
-/*    /index.html   200
-EOF
-echo "✅ Archivo _redirects creado"
+# Verificar que el archivo _redirects se copió correctamente
+if [ -f "build/web/_redirects" ]; then
+  echo "✅ Archivo _redirects encontrado en build/web"
+  cat build/web/_redirects
+else
+  echo "⚠️  Archivo _redirects no encontrado, copiando desde web/"
+  if [ -f "web/_redirects" ]; then
+    cp web/_redirects build/web/_redirects
+    echo "✅ Archivo _redirects copiado"
+  else
+    echo "❌ Archivo _redirects no existe en web/, creándolo..."
+    echo "/* /index.html  200" > build/web/_redirects
+    echo "✅ Archivo _redirects creado"
+  fi
+fi
 
