@@ -112,6 +112,14 @@
   
   
   <script src="flutter_bootstrap.js" async=""></script>
-
+  <script>
+    // Manejo de errores global para debugging
+    window.addEventListener('error', function(e) {
+      console.error('Error global:', e.error);
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      console.error('Promise rechazada:', e.reason);
+    });
+  </script>
 
 </body></html>

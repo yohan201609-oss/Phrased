@@ -38,17 +38,31 @@ class _PhrasedAppState extends State<PhrasedApp> {
   }
 
   Future<void> _initializeApp() async {
-    final locale = await LocaleService.getLocale();
-    final hasSeenOnboarding = await UsageService.hasSeenOnboarding();
+    try {
+      final locale = await LocaleService.getLocale();
+      final hasSeenOnboarding = await UsageService.hasSeenOnboarding();
 
-    // El reseteo diario se maneja automáticamente en getDailyUsage()
-    // No es necesario forzar reseteo en cada inicio
+      // El reseteo diario se maneja automáticamente en getDailyUsage()
+      // No es necesario forzar reseteo en cada inicio
 
-    setState(() {
-      _locale = locale;
-      _hasSeenOnboarding = hasSeenOnboarding;
-      _isLoading = false;
-    });
+      if (mounted) {
+        setState(() {
+          _locale = locale;
+          _hasSeenOnboarding = hasSeenOnboarding;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      // Si hay un error durante la inicialización, mostrar la app de todas formas
+      print('Error durante inicialización: $e');
+      if (mounted) {
+        setState(() {
+          _locale = LocaleService.spanish;
+          _hasSeenOnboarding = false;
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   void toggleTheme() {
