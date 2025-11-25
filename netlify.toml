@@ -1,7 +1,7 @@
 [build]
-  # Comando para instalar Flutter (si no está instalado en el entorno de Netlify)
-  # Netlify Build Image incluye Flutter, pero puedes especificar la versión
-  command = "flutter build web --release"
+  # Script que instala Flutter y luego construye la aplicación
+  # Netlify no incluye Flutter por defecto, así que lo instalamos primero
+  command = "bash build.sh"
   
   # Directorio donde se genera el build
   publish = "build/web"
@@ -11,10 +11,12 @@
   FLUTTER_VERSION = "stable"
 
 # Configuración de redirecciones para SPA (Single Page Application)
+# force = true asegura que todas las rutas redirijan a index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = true
 
 # Headers de seguridad
 [[headers]]
