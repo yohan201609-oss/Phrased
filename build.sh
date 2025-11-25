@@ -44,19 +44,27 @@ flutter clean || true
 # Construir para web con más verbosidad
 echo "🔨 Construyendo aplicación para web..."
 echo "⚠️  Esto puede tardar varios minutos..."
-flutter build web --release --base-href / --verbose 2>&1 | tee build.log || {
-    echo "❌ Error durante la compilación"
+
+# Ejecutar el build y capturar el código de salida
+BUILD_EXIT_CODE=0
+flutter build web --release --base-href / --verbose 2>&1 | tee build.log || BUILD_EXIT_CODE=$?
+
+# Verificar el código de salida
+if [ $BUILD_EXIT_CODE -ne 0 ]; then
+    echo "❌ Error durante la compilación (código: $BUILD_EXIT_CODE)"
     echo "📋 Últimas líneas del log:"
-    tail -50 build.log || true
+    tail -50 build.log 2>&1 || true
     echo "📋 Log completo guardado en build.log"
     exit 1
-}
+fi
 
-# Verificar que el build se completó correctamente
+# Verificar que el build realmente creó el directorio
 if [ ! -d "build/web" ]; then
-    echo "❌ Error: El directorio build/web no existe después del build"
-    echo "📋 Verificando estructura de directorios..."
-    ls -la build/ || true
+    echo "❌ Error: El build no generó el directorio build/web"
+    echo "📋 Verificando si existe build/:"
+    ls -la build/ 2>&1 || echo "El directorio build/ no existe"
+    echo "📋 Últimas líneas del log:"
+    tail -50 build.log 2>&1 || true
     exit 1
 fi
 
