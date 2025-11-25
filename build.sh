@@ -36,10 +36,22 @@ cd /opt/build/repo
 echo "📚 Obteniendo dependencias de Flutter..."
 flutter pub get
 
-# Construir para web
+# Limpiar build anterior
+echo "🧹 Limpiando build anterior..."
+flutter clean || true
+
+# Construir para web con más verbosidad
 echo "🔨 Construyendo aplicación para web..."
-flutter build web --release --base-href /
+echo "⚠️  Esto puede tardar varios minutos..."
+flutter build web --release --base-href / --verbose 2>&1 | tee build.log || {
+    echo "❌ Error durante la compilación"
+    echo "📋 Últimas líneas del log:"
+    tail -50 build.log || true
+    echo "📋 Log completo guardado en build.log"
+    exit 1
+}
 
 echo "✅ Build completado exitosamente!"
 echo "📁 Archivos generados en: build/web"
+ls -la build/web/ | head -20
 

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io' if (dart.library.html) 'dart:html' as io;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
@@ -92,7 +91,7 @@ class ApiService {
       ];
 
       // Si hay imágenes, agregarlas al request
-      if (hasImages && imageFiles != null) {
+      if (hasImages) {
         for (final imageFile in imageFiles) {
           try {
             // Usar readAsBytes() de XFile que funciona tanto en web como en móviles
@@ -218,12 +217,6 @@ class ApiService {
           ? "No response was generated."
           : "No se generó respuesta.";
       return [noResponseMsg];
-    } on io.SocketException catch (e) {
-      print("ERROR DE CONEXIÓN: $e");
-      final connectionError = languageCode == 'en'
-          ? "Connection error: Could not connect to the server. Check your internet connection."
-          : "Error de conexión: No se pudo conectar con el servidor. Verifica tu conexión a internet.";
-      return [connectionError];
     } on http.ClientException catch (e) {
       print("ERROR DE CLIENTE: $e");
       final clientError = languageCode == 'en'
@@ -243,6 +236,7 @@ class ApiService {
     } catch (e) {
       print("EXCEPCIÓN: $e");
       final errorMessage = e.toString().toLowerCase();
+      // Manejar errores de conexión (SocketException no existe en web, pero podemos detectar el mensaje)
       if (errorMessage.contains('socket') ||
           errorMessage.contains('connection') ||
           errorMessage.contains('host lookup') ||

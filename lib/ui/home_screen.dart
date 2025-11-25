@@ -1,4 +1,5 @@
 import 'dart:io' if (dart.library.html) 'dart:html' as io;
+import 'dart:io' if (dart.library.io) 'dart:io' show File;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -585,7 +586,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fit: BoxFit.cover,
                                     )
                                   : Image.file(
-                                      io.File(imagePath),
+                                      File(imagePath),
                                       width: 100,
                                       height: 100,
                                       fit: BoxFit.cover,
