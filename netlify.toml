@@ -11,12 +11,13 @@
   FLUTTER_VERSION = "stable"
 
 # Configuración de redirecciones para SPA (Single Page Application)
-# force = true asegura que todas las rutas redirijan a index.html
+# IMPORTANTE: No usar force = true porque redirige también archivos JS/CSS
+# Solo redirigir rutas que no sean archivos estáticos
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
+  # No usar force = true para permitir que los archivos estáticos se sirvan correctamente
 
 # Headers de seguridad
 [[headers]]
