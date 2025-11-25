@@ -18,8 +18,8 @@ Aplicación Flutter multiplataforma para gestión de frases y expresiones.
 
 1. Clona el repositorio:
 ```bash
-git clone https://github.com/tu-usuario/phrased.git
-cd phrased
+git clone https://github.com/yohan201609-oss/Phrased.git
+cd Phrased
 ```
 
 2. Instala las dependencias:
@@ -51,12 +51,8 @@ git add .
 git commit -m "Initial commit"
 ```
 
-4. Crea un nuevo repositorio en GitHub y luego conecta tu repositorio local:
-```bash
-git remote add origin https://github.com/tu-usuario/phrased.git
-git branch -M main
-git push -u origin main
-```
+4. El repositorio ya está conectado a GitHub:
+   - Repositorio: [https://github.com/yohan201609-oss/Phrased](https://github.com/yohan201609-oss/Phrased)
 
 ### Netlify
 
