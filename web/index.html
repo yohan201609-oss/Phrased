@@ -116,9 +116,25 @@
     // Manejo de errores global para debugging
     window.addEventListener('error', function(e) {
       console.error('Error global:', e.error);
+      // Forzar remoción del splash si hay error
+      setTimeout(function() {
+        removeSplashFromWeb();
+      }, 1000);
     });
     window.addEventListener('unhandledrejection', function(e) {
       console.error('Promise rechazada:', e.reason);
+    });
+    
+    // Timeout de seguridad para remover splash después de 5 segundos
+    setTimeout(function() {
+      console.log('Timeout: removiendo splash screen');
+      removeSplashFromWeb();
+    }, 5000);
+    
+    // Escuchar cuando Flutter esté listo
+    window.addEventListener('flutter-first-frame', function() {
+      console.log('Flutter first frame cargado');
+      removeSplashFromWeb();
     });
   </script>
 

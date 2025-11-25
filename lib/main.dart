@@ -39,6 +39,32 @@ class _PhrasedAppState extends State<PhrasedApp> {
 
   Future<void> _initializeApp() async {
     try {
+      // Agregar timeout para evitar que se quede colgado
+      await _loadAppData().timeout(
+        const Duration(seconds: 2),
+        onTimeout: () {
+          print('Timeout en inicialización, cargando app con valores por defecto');
+        },
+      );
+    } catch (e) {
+      // Si hay un error durante la inicialización, mostrar la app de todas formas
+      print('Error durante inicialización: $e');
+    } finally {
+      // Asegurar que siempre se muestre la app, incluso si hay errores
+      if (mounted) {
+        setState(() {
+          if (_isLoading) {
+            _locale = _locale; // Mantener el que ya se cargó o el por defecto
+            _hasSeenOnboarding = _hasSeenOnboarding; // Mantener el que ya se cargó o false
+            _isLoading = false;
+          }
+        });
+      }
+    }
+  }
+
+  Future<void> _loadAppData() async {
+    try {
       final locale = await LocaleService.getLocale();
       final hasSeenOnboarding = await UsageService.hasSeenOnboarding();
 
@@ -53,8 +79,8 @@ class _PhrasedAppState extends State<PhrasedApp> {
         });
       }
     } catch (e) {
-      // Si hay un error durante la inicialización, mostrar la app de todas formas
-      print('Error durante inicialización: $e');
+      print('Error cargando datos de la app: $e');
+      // Continuar de todas formas con valores por defecto
       if (mounted) {
         setState(() {
           _locale = LocaleService.spanish;
