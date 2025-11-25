@@ -3,7 +3,8 @@
 # Script de build para Netlify
 # Instala Flutter y construye la aplicación para web
 
-set -e  # Salir si hay algún error
+# No usar set -e para tener mejor control de errores
+# set -e  # Comentado para manejar errores manualmente
 
 echo "🚀 Iniciando build de Flutter para Netlify..."
 
@@ -59,9 +60,19 @@ if [ ! -d "build/web" ]; then
     exit 1
 fi
 
+# Verificar que el build se completó correctamente
+if [ ! -d "build/web" ]; then
+    echo "❌ Error: El directorio build/web no existe después del build"
+    echo "📋 Verificando estructura de directorios..."
+    ls -la build/ 2>&1 || echo "El directorio build/ tampoco existe"
+    echo "📋 Últimas líneas del log de build:"
+    tail -50 build.log 2>&1 || echo "No se pudo leer build.log"
+    exit 1
+fi
+
 echo "✅ Build completado exitosamente!"
 echo "📁 Archivos generados en: build/web"
-ls -la build/web/ | head -20
+ls -la build/web/ 2>&1 | head -20 || echo "No se pudo listar build/web"
 
 # Verificar y copiar el archivo _redirects
 echo "📝 Verificando archivo _redirects..."
