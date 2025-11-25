@@ -43,7 +43,9 @@ class _PhrasedAppState extends State<PhrasedApp> {
       await _loadAppData().timeout(
         const Duration(seconds: 2),
         onTimeout: () {
-          print('Timeout en inicialización, cargando app con valores por defecto');
+          print(
+            'Timeout en inicialización, cargando app con valores por defecto',
+          );
         },
       );
     } catch (e) {
@@ -55,7 +57,8 @@ class _PhrasedAppState extends State<PhrasedApp> {
         setState(() {
           if (_isLoading) {
             _locale = _locale; // Mantener el que ya se cargó o el por defecto
-            _hasSeenOnboarding = _hasSeenOnboarding; // Mantener el que ya se cargó o false
+            _hasSeenOnboarding =
+                _hasSeenOnboarding; // Mantener el que ya se cargó o false
             _isLoading = false;
           }
         });
@@ -106,7 +109,9 @@ class _PhrasedAppState extends State<PhrasedApp> {
   }
 
   Widget _buildHome() {
+    print('_buildHome: _hasSeenOnboarding=$_hasSeenOnboarding, _locale=$_locale');
     if (_hasSeenOnboarding) {
+      print('Mostrando HomeScreen');
       return HomeScreen(
         onThemeToggle: toggleTheme,
         isDarkMode: _isDarkMode,
@@ -114,6 +119,7 @@ class _PhrasedAppState extends State<PhrasedApp> {
         currentLocale: _locale,
       );
     } else {
+      print('Mostrando OnboardingScreen');
       return OnboardingScreen(
         onThemeToggle: toggleTheme,
         isDarkMode: _isDarkMode,
@@ -125,26 +131,30 @@ class _PhrasedAppState extends State<PhrasedApp> {
 
   @override
   Widget build(BuildContext context) {
+    Widget homeWidget;
+    
     if (_isLoading) {
-      return MaterialApp(
-        title: 'Phrased',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        locale: _locale,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('es', 'ES'),
-          Locale('en', 'US'),
-          Locale('es'), // Fallback para español
-          Locale('en'), // Fallback para inglés
-        ],
-        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+      homeWidget = const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
       );
+    } else {
+      try {
+        homeWidget = _buildHome();
+      } catch (e) {
+        print('Error construyendo home: $e');
+        homeWidget = Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                const SizedBox(height: 16),
+                Text('Error: $e'),
+              ],
+            ),
+          ),
+        );
+      }
     }
 
     return MaterialApp(
@@ -160,8 +170,13 @@ class _PhrasedAppState extends State<PhrasedApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [LocaleService.spanish, LocaleService.english],
-      home: _buildHome(),
+      supportedLocales: const [
+        LocaleService.spanish,
+        LocaleService.english,
+        Locale('es', 'ES'),
+        Locale('en', 'US'),
+      ],
+      home: homeWidget,
     );
   }
 }
